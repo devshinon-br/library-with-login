@@ -10,20 +10,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    private final UserDetailsManager userDetailsManager;
-
-    @Autowired
-    public UserService(final UserDetailsManager userDetailsManager) {
-        this.userDetailsManager = userDetailsManager;
-    }
-
-    public void createUser(final UserDTO userDTO) {
-        final UserDetails user = User.withDefaultPasswordEncoder()
-            .username(userDTO.getUsername())
-            .password(userDTO.getPassword())
-            .roles("USER")
-            .build();
-
-        userDetailsManager.createUser(user);
-    }
+//    private final UserDetailsManager userDetailsManager;
+//
+//    @Autowired
+//    public UserService(final UserDetailsManager userDetailsManager) {
+//        this.userDetailsManager = userDetailsManager;
+//    }
+//
+//    public void createUser(final UserDTO userDTO) {
+//        final UserDetails user = User.withDefaultPasswordEncoder()
+//            .username(userDTO.getUsername())
+//            .password(userDTO.getPassword())
+//            .roles("USER")
+//            .build();
+//
+//        userDetailsManager.createUser(user);
+//    }
 }

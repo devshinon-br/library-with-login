@@ -5,6 +5,7 @@ import com.library.model.Book;
 import com.library.model.dto.BookDTO;
 import com.library.model.dto.converter.BookDTOConverter;
 import com.library.service.BookService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/books")
+@Tag(name = "Book", description = "Endpoint for managing books.")
 public class BookController {
 
     private final BookService bookService;

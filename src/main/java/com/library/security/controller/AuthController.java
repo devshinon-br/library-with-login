@@ -19,22 +19,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    private final AuthenticationManager authenticationManager;
-
-    private final JwtTokenProvider jwtTokenProvider;
-
-    private final UserService userService;
-
-
-    @Autowired
-    public AuthController(final AuthenticationManager authenticationManager,
-                          final JwtTokenProvider jwtTokenProvider,
-                          final UserService userService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userService = userService;
-    }
-
+//    private final AuthenticationManager authenticationManager;
+//
+//    private final JwtTokenProvider jwtTokenProvider;
+//
+//    private final UserService userService;
+//
+//
+//    @Autowired
+//    public AuthController(final AuthenticationManager authenticationManager,
+//                          final JwtTokenProvider jwtTokenProvider,
+//                          final UserService userService) {
+//        this.authenticationManager = authenticationManager;
+//        this.jwtTokenProvider = jwtTokenProvider;
+//        this.userService = userService;
+//    }
+//
 //    @PostMapping("/login")
 //    public ResponseEntity<?> authenticateUser(@RequestBody final LoginDTO loginRequest) {
 //        final Authentication authentication = authenticationManager.authenticate(
@@ -50,10 +50,10 @@ public class AuthController {
 //
 //        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
 //    }
-
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody final UserDTO userDTO) {
-        userService.createUser(userDTO);
-        return ResponseEntity.ok("User created successfully");
-    }
+//
+//    @PostMapping("/signup")
+//    public ResponseEntity<?> registerUser(@RequestBody final UserDTO userDTO) {
+//        userService.createUser(userDTO);
+//        return ResponseEntity.ok("User created successfully");
+//    }
 }

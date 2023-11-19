@@ -5,6 +5,7 @@ import com.library.model.Author;
 import com.library.model.dto.AuthorDTO;
 import com.library.model.dto.converter.AuthorDTOConverter;
 import com.library.service.AuthorService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/authors")
+@Tag(name = "Author", description = "Endpoint for managing authors.")
 public class AuthorController {
 
     private final AuthorService authorService;

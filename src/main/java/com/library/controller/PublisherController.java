@@ -5,6 +5,7 @@ import com.library.model.Publisher;
 import com.library.model.dto.PublisherDTO;
 import com.library.model.dto.converter.PublisherDTOConverter;
 import com.library.service.PublisherService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/publishers")
+@Tag(name = "Publisher", description = "Endpoint for managing publishers.")
 public class PublisherController {
 
     private final PublisherService publisherService;
