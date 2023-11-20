@@ -7,6 +7,9 @@ import com.library.model.dto.converter.BookDTOConverter;
 import com.library.service.BookService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,9 +33,22 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public BookDTO getBookById(@PathVariable final Long id) {
+    public EntityModel<BookDTO> getBookById(@PathVariable final Long id) {
         final Book book = bookService.getBookById(id);
-        return BookDTOConverter.convertToDTO(book);
+
+        if (book == null) {
+            throw new EntityNotFoundException("Book with ID " + id + " not found");
+        }
+
+        final EntityModel<BookDTO> resource = EntityModel.of(BookDTOConverter.convertToDTO(book));
+
+        final Link selfLink = Link.of(WebMvcLinkBuilder.linkTo(BookController.class).slash(id).withSelfRel().getHref());
+        resource.add(selfLink);
+
+        final Link booksLink = Link.of(WebMvcLinkBuilder.linkTo(BookController.class).withRel("books").getHref());
+        resource.add(booksLink);
+
+        return resource;
     }
 
     @PostMapping

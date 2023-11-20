@@ -19,13 +19,13 @@ public class JwtTokenProvider {
     private int jwtExpirationInMs;
 
     public String generateToken(final Authentication authentication) {
-        final UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        final String username = (String) authentication.getPrincipal();
 
         final Date now = new Date();
         final Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         return Jwts.builder()
-            .setSubject(userDetails.getUsername())
+            .setSubject(username)
             .setIssuedAt(new Date())
             .setExpiration(expiryDate)
             .signWith(SignatureAlgorithm.HS512, jwtSecret)
