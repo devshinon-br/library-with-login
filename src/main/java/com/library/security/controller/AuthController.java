@@ -7,7 +7,6 @@ import com.library.security.service.AuthService;
 import com.library.security.service.CustomUserDetailsService;
 import com.library.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -47,9 +46,6 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             final String jwt = authService.generateJwtToken(authentication);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + jwt);
 
             return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
         }
