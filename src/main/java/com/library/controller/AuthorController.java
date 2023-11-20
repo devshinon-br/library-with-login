@@ -7,6 +7,9 @@ import com.library.model.dto.converter.AuthorDTOConverter;
 import com.library.service.AuthorService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,9 +33,22 @@ public class AuthorController {
     }
 
     @GetMapping("/{id}")
-    public AuthorDTO getAuthorById(@PathVariable final Long id) {
+    public EntityModel<AuthorDTO> getAuthorById(@PathVariable final Long id) {
         final Author author = authorService.getAuthorById(id);
-        return AuthorDTOConverter.convertToDTO(author);
+
+        if (author == null) {
+            throw new EntityNotFoundException("Author with ID " + id + " not found");
+        }
+
+        final EntityModel<AuthorDTO> resource = EntityModel.of(AuthorDTOConverter.convertToDTO(author));
+
+        final Link selfLink = Link.of(WebMvcLinkBuilder.linkTo(AuthorController.class).slash(id).withSelfRel().getHref());
+        resource.add(selfLink);
+
+        final Link authorsLink = Link.of(WebMvcLinkBuilder.linkTo(AuthorController.class).withRel("authors").getHref());
+        resource.add(authorsLink);
+
+        return resource;
     }
 
     @PostMapping

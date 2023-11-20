@@ -14,3 +14,16 @@ CREATE TABLE book (
     author_id BIGINT REFERENCES author(id),
     publisher_id BIGINT REFERENCES publisher(id)
 );
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    enabled BOOLEAN NOT NULL
+);
+
+CREATE TABLE authorities (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) REFERENCES users(username),
+    authority VARCHAR(50) NOT NULL
+);

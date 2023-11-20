@@ -7,6 +7,9 @@ import com.library.model.dto.converter.PublisherDTOConverter;
 import com.library.service.PublisherService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,9 +33,22 @@ public class PublisherController {
     }
 
     @GetMapping("/{id}")
-    public PublisherDTO getPublisherById(@PathVariable final Long id) {
+    public EntityModel<PublisherDTO> getPublisherById(@PathVariable final Long id) {
         final Publisher publisher = publisherService.getPublisherById(id);
-        return PublisherDTOConverter.convertToDTO(publisher);
+
+        if (publisher == null) {
+            throw new EntityNotFoundException("Publisher with ID " + id + " not found");
+        }
+
+        final EntityModel<PublisherDTO> resource = EntityModel.of(PublisherDTOConverter.convertToDTO(publisher));
+
+        final Link selfLink = Link.of(WebMvcLinkBuilder.linkTo(PublisherController.class).slash(id).withSelfRel().getHref());
+        resource.add(selfLink);
+
+        final Link publishersLink = Link.of(WebMvcLinkBuilder.linkTo(PublisherController.class).withRel("publishers").getHref());
+        resource.add(publishersLink);
+
+        return resource;
     }
 
     @PostMapping
