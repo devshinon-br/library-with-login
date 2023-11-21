@@ -18,4 +18,8 @@ public class Book {
     @ManyToOne
     @JoinColumn(name = "publisher_id")
     private Publisher publisher;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "book_detail_id", referencedColumnName = "id")
+    private BookDetail bookDetail;
 }

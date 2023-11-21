@@ -8,11 +8,21 @@ CREATE TABLE publisher (
     name VARCHAR(255) NOT NULL
 );
 
+CREATE TABLE book_detail (
+    id SERIAL PRIMARY KEY,
+    genre VARCHAR(255),
+    page_count INT,
+    language VARCHAR(50),
+    available_online BOOLEAN,
+    publication_date DATE
+);
+
 CREATE TABLE book (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     author_id BIGINT REFERENCES author(id),
-    publisher_id BIGINT REFERENCES publisher(id)
+    publisher_id BIGINT REFERENCES publisher(id),
+    book_detail_id BIGINT REFERENCES book_detail(id)
 );
 
 CREATE TABLE users (
