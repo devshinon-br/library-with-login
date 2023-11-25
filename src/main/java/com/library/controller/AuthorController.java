@@ -7,6 +7,9 @@ import com.library.model.dto.response.AuthorResponse;
 import com.library.service.AuthorService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +42,7 @@ public class AuthorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AuthorResponse> getAuthorById(@PathVariable final Long id) {
+    public ResponseEntity<EntityModel<AuthorResponse>> getAuthorById(@PathVariable final Long id) {
         final Author author = authorService.getAuthorById(id);
 
         if (author == null) {
@@ -47,7 +50,15 @@ public class AuthorController {
         }
 
         final AuthorResponse authorResponse = modelMapper.map(author, AuthorResponse.class);
-        return ResponseEntity.ok(authorResponse);
+        final EntityModel<AuthorResponse> resource = EntityModel.of(authorResponse);
+
+        final Link selfLink = Link.of(WebMvcLinkBuilder.linkTo(AuthorController.class).slash(id).withSelfRel().getHref());
+        resource.add(selfLink);
+
+        final Link authorsLink = Link.of(WebMvcLinkBuilder.linkTo(AuthorController.class).withRel("authors").getHref());
+        resource.add(authorsLink);
+
+        return ResponseEntity.ok(resource);
     }
 
     @PostMapping

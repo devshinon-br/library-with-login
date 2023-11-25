@@ -10,6 +10,9 @@ import com.library.model.dto.response.BookResponse;
 import com.library.service.BookService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -50,15 +53,23 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookResponse> getBookById(@PathVariable final Long id) {
+    public ResponseEntity<EntityModel<BookResponse>> getBookById(@PathVariable final Long id) {
         final Book book = bookService.getBookById(id);
 
         if (book == null) {
             throw new EntityNotFoundException("Book with ID " + id + " not found");
         }
 
-        BookResponse bookResponse = modelMapper.map(book, BookResponse.class);
-        return ResponseEntity.ok(bookResponse);
+        final BookResponse bookResponse = modelMapper.map(book, BookResponse.class);
+        final EntityModel<BookResponse> resource = EntityModel.of(bookResponse);
+
+        final Link selfLink = Link.of(WebMvcLinkBuilder.linkTo(BookController.class).slash(id).withSelfRel().getHref());
+        resource.add(selfLink);
+
+        final Link booksLink = Link.of(WebMvcLinkBuilder.linkTo(BookController.class).withRel("books").getHref());
+        resource.add(booksLink);
+
+        return ResponseEntity.ok(resource);
     }
 
     @PostMapping

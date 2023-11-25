@@ -7,6 +7,9 @@ import com.library.model.dto.response.PublisherResponse;
 import com.library.service.PublisherService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,15 +42,23 @@ public class PublisherController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PublisherResponse> getPublisherById(@PathVariable final Long id) {
+    public ResponseEntity<EntityModel<PublisherResponse>> getPublisherById(@PathVariable final Long id) {
         final Publisher publisher = publisherService.getPublisherById(id);
 
         if (publisher == null) {
             throw new EntityNotFoundException("Publisher with ID " + id + " not found");
         }
 
-        PublisherResponse publisherResponse = modelMapper.map(publisher, PublisherResponse.class);
-        return ResponseEntity.ok(publisherResponse);
+        final PublisherResponse publisherResponse = modelMapper.map(publisher, PublisherResponse.class);
+        final EntityModel<PublisherResponse> resource = EntityModel.of(publisherResponse);
+
+        final Link selfLink = Link.of(WebMvcLinkBuilder.linkTo(PublisherController.class).slash(id).withSelfRel().getHref());
+        resource.add(selfLink);
+
+        final Link publishersLink = Link.of(WebMvcLinkBuilder.linkTo(PublisherController.class).withRel("publishers").getHref());
+        resource.add(publishersLink);
+
+        return ResponseEntity.ok(resource);
     }
 
     @PostMapping

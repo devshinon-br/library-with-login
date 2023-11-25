@@ -7,6 +7,9 @@ import com.library.model.dto.response.BookCoverResponse;
 import com.library.service.BookCoverService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,15 +41,23 @@ public class BookCoverController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookCoverResponse> getBookCoverById(@PathVariable final Long id) {
+    public ResponseEntity<EntityModel<BookCoverResponse>> getBookCoverById(@PathVariable final Long id) {
         final BookCover bookCover = bookCoverService.getBookCoverById(id);
 
         if (bookCover == null) {
             throw new EntityNotFoundException("BookCover with ID " + id + " not found");
         }
 
-        BookCoverResponse bookCoverResponse = modelMapper.map(bookCover, BookCoverResponse.class);
-        return ResponseEntity.ok(bookCoverResponse);
+        final BookCoverResponse bookCoverResponse = modelMapper.map(bookCover, BookCoverResponse.class);
+        final EntityModel<BookCoverResponse> resource = EntityModel.of(bookCoverResponse);
+
+        final Link selfLink = Link.of(WebMvcLinkBuilder.linkTo(BookCoverController.class).slash(id).withSelfRel().getHref());
+        resource.add(selfLink);
+
+        final Link bookCoversLink = Link.of(WebMvcLinkBuilder.linkTo(BookCoverController.class).withRel("bookCovers").getHref());
+        resource.add(bookCoversLink);
+
+        return ResponseEntity.ok(resource);
     }
 
     @PostMapping

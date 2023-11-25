@@ -7,6 +7,9 @@ import com.library.model.dto.response.GenreResponse;
 import com.library.service.GenreService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,15 +42,23 @@ public class GenreController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GenreResponse> getGenreById(@PathVariable final Long id) {
+    public ResponseEntity<EntityModel<GenreResponse>> getGenreById(@PathVariable final Long id) {
         final Genre genre = genreService.getGenreById(id);
 
         if (genre == null) {
             throw new EntityNotFoundException("Genre with ID " + id + " not found");
         }
 
-        GenreResponse genreResponse = modelMapper.map(genre, GenreResponse.class);
-        return ResponseEntity.ok(genreResponse);
+        final GenreResponse genreResponse = modelMapper.map(genre, GenreResponse.class);
+        final EntityModel<GenreResponse> resource = EntityModel.of(genreResponse);
+
+        final Link selfLink = Link.of(WebMvcLinkBuilder.linkTo(GenreController.class).slash(id).withSelfRel().getHref());
+        resource.add(selfLink);
+
+        final Link genresLink = Link.of(WebMvcLinkBuilder.linkTo(GenreController.class).withRel("genres").getHref());
+        resource.add(genresLink);
+
+        return ResponseEntity.ok(resource);
     }
 
     @PostMapping
