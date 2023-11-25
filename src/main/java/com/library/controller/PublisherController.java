@@ -2,17 +2,18 @@ package com.library.controller;
 
 import com.library.exception.EntityNotFoundException;
 import com.library.model.Publisher;
-import com.library.model.dto.PublisherDTO;
-import com.library.model.dto.converter.PublisherDTOConverter;
+import com.library.model.dto.request.PublisherRequest;
+import com.library.model.dto.response.PublisherResponse;
 import com.library.service.PublisherService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
@@ -20,60 +21,60 @@ import java.util.List;
 public class PublisherController {
 
     private final PublisherService publisherService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public PublisherController(final PublisherService publisherService) {
+    public PublisherController(final PublisherService publisherService, final ModelMapper modelMapper) {
         this.publisherService = publisherService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping
-    public List<PublisherDTO> getAllPublishers() {
-        final List<Publisher> publishers = publisherService.getAllPublishers();
-        return PublisherDTOConverter.convertToDTOList(publishers);
+    public List<PublisherResponse> getAllPublishers() {
+        List<Publisher> publishers = publisherService.getAllPublishers();
+        return publishers.stream()
+            .map(publisher -> modelMapper.map(publisher, PublisherResponse.class))
+            .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public EntityModel<PublisherDTO> getPublisherById(@PathVariable final Long id) {
+    public ResponseEntity<PublisherResponse> getPublisherById(@PathVariable final Long id) {
         final Publisher publisher = publisherService.getPublisherById(id);
 
         if (publisher == null) {
             throw new EntityNotFoundException("Publisher with ID " + id + " not found");
         }
 
-        final EntityModel<PublisherDTO> resource = EntityModel.of(PublisherDTOConverter.convertToDTO(publisher));
-
-        final Link selfLink = Link.of(WebMvcLinkBuilder.linkTo(PublisherController.class).slash(id).withSelfRel().getHref());
-        resource.add(selfLink);
-
-        final Link publishersLink = Link.of(WebMvcLinkBuilder.linkTo(PublisherController.class).withRel("publishers").getHref());
-        resource.add(publishersLink);
-
-        return resource;
+        PublisherResponse publisherResponse = modelMapper.map(publisher, PublisherResponse.class);
+        return ResponseEntity.ok(publisherResponse);
     }
 
     @PostMapping
-    public PublisherDTO savePublisher(@RequestBody final PublisherDTO publisherDTO) {
-        final Publisher publisher = PublisherDTOConverter.convertToEntity(publisherDTO);
+    public ResponseEntity<PublisherResponse> savePublisher(@RequestBody final PublisherRequest publisherRequest) {
+        final Publisher publisher = modelMapper.map(publisherRequest, Publisher.class);
         final Publisher savedPublisher = publisherService.savePublisher(publisher);
-        return PublisherDTOConverter.convertToDTO(savedPublisher);
+        PublisherResponse publisherResponse = modelMapper.map(savedPublisher, PublisherResponse.class);
+        return new ResponseEntity<>(publisherResponse, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public PublisherDTO updatePublisher(@PathVariable final Long id, @RequestBody final PublisherDTO publisherDTO) {
+    public ResponseEntity<PublisherResponse> updatePublisher(@PathVariable final Long id, @RequestBody final PublisherRequest publisherRequest) {
         final Publisher existingPublisher = publisherService.getPublisherById(id);
 
         if (existingPublisher == null) {
             throw new EntityNotFoundException("Publisher with ID " + id + " not found");
         }
 
-        final Publisher updatedPublisher = PublisherDTOConverter.updateEntityFromDTO(existingPublisher, publisherDTO);
-        final Publisher savedPublisher = publisherService.savePublisher(updatedPublisher);
-        return PublisherDTOConverter.convertToDTO(savedPublisher);
+        modelMapper.map(publisherRequest, existingPublisher);
+        final Publisher savedPublisher = publisherService.savePublisher(existingPublisher);
+        PublisherResponse publisherResponse = modelMapper.map(savedPublisher, PublisherResponse.class);
+        return ResponseEntity.ok(publisherResponse);
     }
 
     @DeleteMapping("/{id}")
-    public void deletePublisher(@PathVariable final Long id) {
+    public ResponseEntity<Void> deletePublisher(@PathVariable final Long id) {
         publisherService.deletePublisher(id);
+        return ResponseEntity.noContent().build();
     }
 }
 

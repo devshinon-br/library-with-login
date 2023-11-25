@@ -8,31 +8,28 @@ CREATE TABLE publisher (
     name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE book_detail (
-    id SERIAL PRIMARY KEY,
-    page_count INT,
-    language VARCHAR(50),
-    available_online BOOLEAN,
-    publication_date DATE
-);
-
-CREATE TABLE tag (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE book_detail_tag (
-    book_detail_id SERIAL REFERENCES book_detail(id),
-    tag_id SERIAL REFERENCES tag(id),
-    PRIMARY KEY (book_detail_id, tag_id)
-);
-
 CREATE TABLE book (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     author_id BIGINT REFERENCES author(id),
-    publisher_id BIGINT REFERENCES publisher(id),
-    book_detail_id BIGINT REFERENCES book_detail(id)
+    publisher_id BIGINT REFERENCES publisher(id)
+);
+
+CREATE TABLE book_cover (
+    id SERIAL PRIMARY KEY,
+    cover_image_url VARCHAR(255),
+    book_id BIGINT UNIQUE REFERENCES book(id)
+);
+
+CREATE TABLE genre (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE book_genre (
+    book_id SERIAL REFERENCES book(id),
+    genre_id SERIAL REFERENCES genre(id),
+    PRIMARY KEY (book_id, genre_id)
 );
 
 CREATE TABLE users (

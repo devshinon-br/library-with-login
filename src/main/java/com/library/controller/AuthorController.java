@@ -2,17 +2,18 @@ package com.library.controller;
 
 import com.library.exception.EntityNotFoundException;
 import com.library.model.Author;
-import com.library.model.dto.AuthorDTO;
-import com.library.model.dto.converter.AuthorDTOConverter;
+import com.library.model.dto.request.AuthorRequest;
+import com.library.model.dto.response.AuthorResponse;
 import com.library.service.AuthorService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
@@ -20,60 +21,60 @@ import java.util.List;
 public class AuthorController {
 
     private final AuthorService authorService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public AuthorController(final AuthorService authorService) {
+    public AuthorController(final AuthorService authorService, final ModelMapper modelMapper) {
         this.authorService = authorService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping
-    public List<AuthorDTO> getAllAuthors() {
+    public List<AuthorResponse> getAllAuthors() {
         final List<Author> authors = authorService.getAllAuthors();
-        return AuthorDTOConverter.convertToDTOList(authors);
+        return authors.stream()
+            .map(author -> modelMapper.map(author, AuthorResponse.class))
+            .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public EntityModel<AuthorDTO> getAuthorById(@PathVariable final Long id) {
+    public ResponseEntity<AuthorResponse> getAuthorById(@PathVariable final Long id) {
         final Author author = authorService.getAuthorById(id);
 
         if (author == null) {
             throw new EntityNotFoundException("Author with ID " + id + " not found");
         }
 
-        final EntityModel<AuthorDTO> resource = EntityModel.of(AuthorDTOConverter.convertToDTO(author));
-
-        final Link selfLink = Link.of(WebMvcLinkBuilder.linkTo(AuthorController.class).slash(id).withSelfRel().getHref());
-        resource.add(selfLink);
-
-        final Link authorsLink = Link.of(WebMvcLinkBuilder.linkTo(AuthorController.class).withRel("authors").getHref());
-        resource.add(authorsLink);
-
-        return resource;
+        final AuthorResponse authorResponse = modelMapper.map(author, AuthorResponse.class);
+        return ResponseEntity.ok(authorResponse);
     }
 
     @PostMapping
-    public AuthorDTO saveAuthor(@RequestBody final AuthorDTO authorDTO) {
-        final Author author = AuthorDTOConverter.convertToEntity(authorDTO);
+    public ResponseEntity<AuthorResponse> saveAuthor(@RequestBody final AuthorRequest authorRequest) {
+        final Author author = modelMapper.map(authorRequest, Author.class);
         final Author savedAuthor = authorService.saveAuthor(author);
-        return AuthorDTOConverter.convertToDTO(savedAuthor);
+        final AuthorResponse authorResponse = modelMapper.map(savedAuthor, AuthorResponse.class);
+        return new ResponseEntity<>(authorResponse, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public AuthorDTO updateAuthor(@PathVariable final Long id, @RequestBody final AuthorDTO authorDTO) {
+    public ResponseEntity<AuthorResponse> updateAuthor(@PathVariable final Long id, @RequestBody final AuthorRequest authorRequest) {
         final Author existingAuthor = authorService.getAuthorById(id);
 
         if (existingAuthor == null) {
             throw new EntityNotFoundException("Author with ID " + id + " not found");
         }
 
-        final Author updatedAuthor = AuthorDTOConverter.updateEntityFromDTO(existingAuthor, authorDTO);
-        final Author savedAuthor = authorService.saveAuthor(updatedAuthor);
-        return AuthorDTOConverter.convertToDTO(savedAuthor);
+        modelMapper.map(authorRequest, existingAuthor);
+        final Author savedAuthor = authorService.saveAuthor(existingAuthor);
+        final AuthorResponse authorResponse = modelMapper.map(savedAuthor, AuthorResponse.class);
+        return ResponseEntity.ok(authorResponse);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteAuthor(@PathVariable final Long id) {
+    public ResponseEntity<Void> deleteAuthor(@PathVariable final Long id) {
         authorService.deleteAuthor(id);
+        return ResponseEntity.noContent().build();
     }
 }
 
