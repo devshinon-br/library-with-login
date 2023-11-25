@@ -10,11 +10,21 @@ CREATE TABLE publisher (
 
 CREATE TABLE book_detail (
     id SERIAL PRIMARY KEY,
-    genre VARCHAR(255),
     page_count INT,
     language VARCHAR(50),
     available_online BOOLEAN,
     publication_date DATE
+);
+
+CREATE TABLE tag (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE book_detail_tag (
+    book_detail_id SERIAL REFERENCES book_detail(id),
+    tag_id SERIAL REFERENCES tag(id),
+    PRIMARY KEY (book_detail_id, tag_id)
 );
 
 CREATE TABLE book (

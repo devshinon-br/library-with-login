@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class BookDTO implements Serializable {
-    private String title;
-    private Long authorId;
-    private Long publisherId;
+public class TagDTO implements Serializable {
+    private String name;
+    private List<Long> bookDetailsIds;
 }

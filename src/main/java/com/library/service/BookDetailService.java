@@ -34,7 +34,6 @@ public class BookDetailService {
         BookDetail existingBookDetail = bookDetailRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("BookDetail with ID " + id + " not found"));
 
-        existingBookDetail.setGenre(bookDetail.getGenre());
         existingBookDetail.setPageCount(bookDetail.getPageCount());
         existingBookDetail.setLanguage(bookDetail.getLanguage());
         existingBookDetail.setAvailableOnline(bookDetail.isAvailableOnline());

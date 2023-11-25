@@ -5,11 +5,12 @@ import com.library.model.Book;
 import com.library.model.dto.BookDTO;
 import com.library.model.dto.converter.BookDTOConverter;
 import com.library.service.BookService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,6 @@ import java.util.List;
 @RestController
 @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 @RequestMapping("/books")
-@Tag(name = "Book", description = "Endpoint for managing books.")
 public class BookController {
 
     private final BookService bookService;
@@ -28,7 +28,7 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @GetMapping
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "application/yaml"})
     public List<BookDTO> getAllBooks() {
         final List<Book> books = bookService.getAllBooks();
         return BookDTOConverter.convertToDTOList(books);

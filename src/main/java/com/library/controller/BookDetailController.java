@@ -3,10 +3,8 @@ package com.library.controller;
 import com.library.exception.EntityNotFoundException;
 import com.library.model.BookDetail;
 import com.library.model.dto.BookDetailDTO;
-import com.library.model.dto.converter.BookDTOConverter;
 import com.library.model.dto.converter.BookDetailDTOConverter;
 import com.library.service.BookDetailService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -19,7 +17,6 @@ import java.util.List;
 @RestController
 @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 @RequestMapping("/book-details")
-@Tag(name = "BookDetail", description = "Endpoint for managing book details.")
 public class BookDetailController {
 
     private final BookDetailService bookDetailService;

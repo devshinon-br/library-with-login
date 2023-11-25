@@ -80,7 +80,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeRequests(authorizeRequests ->
                 authorizeRequests
-                    .requestMatchers("/auth/**", "/swagger-ui/**").permitAll()
+                    .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .anyRequest().authenticated()
             )
             //.formLogin(withDefaults())

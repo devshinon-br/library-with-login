@@ -10,5 +10,5 @@ import java.util.List;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
     @Query("SELECT b FROM Book b WHERE b.author = :author")
-    List<Book> findByAutor(@Param("author") final Author author);
+    List<Book> findByAuthor(@Param("author") final Author author);
 }

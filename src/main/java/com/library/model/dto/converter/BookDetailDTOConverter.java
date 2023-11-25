@@ -1,8 +1,6 @@
 package com.library.model.dto.converter;
 
-import com.library.model.Book;
 import com.library.model.BookDetail;
-import com.library.model.dto.BookDTO;
 import com.library.model.dto.BookDetailDTO;
 
 import java.util.List;
@@ -16,7 +14,6 @@ public class BookDetailDTOConverter {
         }
 
         return new BookDetailDTO(
-            bookDetail.getGenre(),
             bookDetail.getPageCount(),
             bookDetail.getLanguage(),
             bookDetail.isAvailableOnline(),
@@ -35,8 +32,7 @@ public class BookDetailDTOConverter {
             return null;
         }
 
-        BookDetail bookDetail = new BookDetail();
-        bookDetail.setGenre(bookDetailDTO.getGenre());
+        final BookDetail bookDetail = new BookDetail();
         bookDetail.setPageCount(bookDetailDTO.getPageCount());
         bookDetail.setLanguage(bookDetailDTO.getLanguage());
         bookDetail.setAvailableOnline(bookDetailDTO.isAvailableOnline());
@@ -50,7 +46,6 @@ public class BookDetailDTOConverter {
             return null;
         }
 
-        existingBookDetail.setGenre(bookDetailDTO.getGenre());
         existingBookDetail.setPageCount(bookDetailDTO.getPageCount());
         existingBookDetail.setLanguage(bookDetailDTO.getLanguage());
         existingBookDetail.setAvailableOnline(bookDetailDTO.isAvailableOnline());
