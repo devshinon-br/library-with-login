@@ -13,9 +13,12 @@ public class TagDTOConverter {
         if (tag == null) {
             return null;
         }
+
         return new TagDTO(
+            tag.getId(),
             tag.getName(),
-            getBookDetailIds(tag.getBookDetails()));
+            getBookDetailIds(tag.getBookDetails())
+        );
     }
 
     public static List<TagDTO> convertToDTOList(final List<Tag> tags) {
@@ -29,6 +32,7 @@ public class TagDTOConverter {
             return null;
         }
         final Tag tag = new Tag();
+        tag.setId(tagDTO.getId());
         tag.setName(tagDTO.getName());
         return tag;
     }
@@ -37,6 +41,7 @@ public class TagDTOConverter {
         if (existingTag == null || tagDTO == null) {
             return null;
         }
+        existingTag.setId(tagDTO.getId());
         existingTag.setName(tagDTO.getName());
         return existingTag;
     }
@@ -59,3 +64,4 @@ public class TagDTOConverter {
         return tag;
     }
 }
+

@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class TagDTO implements Serializable {
+    private Long id;
     private String name;
     private List<Long> bookDetailsIds;
 }

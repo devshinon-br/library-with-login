@@ -13,7 +13,11 @@ public class PublisherDTOConverter {
         if (publisher == null) {
             return null;
         }
-        return new PublisherDTO(publisher.getName(), getBookIds(publisher.getBooks()));
+        return new PublisherDTO(
+            publisher.getId(),
+            publisher.getName(),
+            getBookIds(publisher.getBooks())
+        );
     }
 
     public static List<PublisherDTO> convertToDTOList(final List<Publisher> publishers) {
@@ -27,6 +31,7 @@ public class PublisherDTOConverter {
             return null;
         }
         final Publisher publisher = new Publisher();
+        publisher.setId(publisherDTO.getId());
         publisher.setName(publisherDTO.getName());
         return publisher;
     }
@@ -35,6 +40,7 @@ public class PublisherDTOConverter {
         if (existingPublisher == null || publisherDTO == null) {
             return null;
         }
+        existingPublisher.setId(publisherDTO.getId());
         existingPublisher.setName(publisherDTO.getName());
         return existingPublisher;
     }

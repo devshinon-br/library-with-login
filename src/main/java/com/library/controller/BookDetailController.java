@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,7 @@ public class BookDetailController {
         this.bookDetailService = bookDetailService;
     }
 
-    @GetMapping
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "application/yaml"})
     public List<BookDetailDTO> getAllBookDetails() {
         final List<BookDetail> bookDetails = bookDetailService.getAllBookDetails();
         return BookDetailDTOConverter.convertToDTOList(bookDetails);

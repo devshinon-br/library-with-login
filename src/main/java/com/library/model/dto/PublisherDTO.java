@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class PublisherDTO implements Serializable {
+    private Long id;
     private String name;
     private List<Long> bookIds;
 }

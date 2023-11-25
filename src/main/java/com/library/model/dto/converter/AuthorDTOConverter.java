@@ -14,6 +14,7 @@ public class AuthorDTOConverter {
             return null;
         }
         return new AuthorDTO(
+            author.getId(),
             author.getName(),
             getBookIds(author.getBooks()));
     }
@@ -29,6 +30,7 @@ public class AuthorDTOConverter {
             return null;
         }
         final Author author = new Author();
+        author.setId(authorDTO.getId());
         author.setName(authorDTO.getName());
         return author;
     }
@@ -37,6 +39,7 @@ public class AuthorDTOConverter {
         if (existingAuthor == null || authorDTO == null) {
             return null;
         }
+        existingAuthor.setId(authorDTO.getId());
         existingAuthor.setName(authorDTO.getName());
         return existingAuthor;
     }

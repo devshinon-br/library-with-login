@@ -12,7 +12,13 @@ public class BookDTOConverter {
         if (book == null) {
             return null;
         }
-        return new BookDTO(book.getTitle(), book.getAuthor().getId(), book.getPublisher().getId());
+
+        return new BookDTO(
+            book.getId(),
+            book.getTitle(),
+            book.getAuthor().getId(),
+            book.getPublisher().getId()
+        );
     }
 
     public static List<BookDTO> convertToDTOList(final List<Book> books) {
@@ -26,6 +32,7 @@ public class BookDTOConverter {
             return null;
         }
         final Book book = new Book();
+        book.setId(bookDTO.getId());
         book.setTitle(bookDTO.getTitle());
 
         return book;
@@ -35,8 +42,10 @@ public class BookDTOConverter {
         if (existingBook == null || bookDTO == null) {
             return null;
         }
+        existingBook.setId(bookDTO.getId());
         existingBook.setTitle(bookDTO.getTitle());
 
         return existingBook;
     }
 }
+

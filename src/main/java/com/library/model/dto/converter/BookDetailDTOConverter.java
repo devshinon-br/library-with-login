@@ -14,6 +14,7 @@ public class BookDetailDTOConverter {
         }
 
         return new BookDetailDTO(
+            bookDetail.getId(),
             bookDetail.getPageCount(),
             bookDetail.getLanguage(),
             bookDetail.isAvailableOnline(),
@@ -33,6 +34,7 @@ public class BookDetailDTOConverter {
         }
 
         final BookDetail bookDetail = new BookDetail();
+        bookDetail.setId(bookDetailDTO.getId());
         bookDetail.setPageCount(bookDetailDTO.getPageCount());
         bookDetail.setLanguage(bookDetailDTO.getLanguage());
         bookDetail.setAvailableOnline(bookDetailDTO.isAvailableOnline());
@@ -46,6 +48,7 @@ public class BookDetailDTOConverter {
             return null;
         }
 
+        existingBookDetail.setId(bookDetailDTO.getId());
         existingBookDetail.setPageCount(bookDetailDTO.getPageCount());
         existingBookDetail.setLanguage(bookDetailDTO.getLanguage());
         existingBookDetail.setAvailableOnline(bookDetailDTO.isAvailableOnline());

@@ -9,6 +9,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 public class BookDetailDTO implements Serializable {
+    private Long id;
     private int pageCount;
     private String language;
     private boolean availableOnline;

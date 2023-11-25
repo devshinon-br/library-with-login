@@ -28,7 +28,7 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "application/yaml"})
+    @GetMapping
     public List<BookDTO> getAllBooks() {
         final List<Book> books = bookService.getAllBooks();
         return BookDTOConverter.convertToDTOList(books);
