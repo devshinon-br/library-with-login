@@ -1,11 +1,10 @@
 package com.library.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.library.utils.converter.YamlJackson2HttpMessageConverter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -24,7 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void configureMessageConverters(final List<HttpMessageConverter<?>> converters) {
-        final ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
-        converters.add(new MappingJackson2HttpMessageConverter(yamlMapper));
+        converters.add(new YamlJackson2HttpMessageConverter());
+        converters.add(new MappingJackson2XmlHttpMessageConverter());
     }
 }

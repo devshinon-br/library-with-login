@@ -8,6 +8,7 @@ import com.library.service.BookCoverService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class BookCoverController {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "application/yaml"})
     public List<BookCoverResponse> getAllBookCovers() {
         final List<BookCover> bookCovers = bookCoverService.getAllBookCovers();
         return bookCovers.stream()
