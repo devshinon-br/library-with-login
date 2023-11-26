@@ -61,6 +61,12 @@ public class BookController {
         }
 
         final BookResponse bookResponse = modelMapper.map(book, BookResponse.class);
+
+        final BookCover bookCover = bookService.findBookCoverByBookId(book.getId());
+        if (bookCover != null) {
+            bookResponse.setBookCover(modelMapper.map(bookCover, BookCoverResponse.class));
+        }
+
         final EntityModel<BookResponse> resource = EntityModel.of(bookResponse);
 
         final Link selfLink = Link.of(WebMvcLinkBuilder.linkTo(BookController.class).slash(id).withSelfRel().getHref());
